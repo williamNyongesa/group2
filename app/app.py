@@ -84,7 +84,42 @@ class Reviews(Resource):
         return make_response(jsonify(review_list), 200)
     
     def post(self):
-        reviews = Review.query.all()
+        customer_id = session.get("customer_id")
+        product_id = request.get_json().get("product_id")
+        review_text = request.get_json().get("review")
+        rating = request.get_json().get("rating")
+
+        if customer_id is None:
+            return {"error": "You must be logged in to create a review"}, 401
+        
+        if product_id is None or review_text is None or rating is None:
+            return {"error":"Product ID, review and rating must be provided to create a review"}, 422
+        
+        #Check if the customer has already reviewed this product
+        existing_review = Review.query.filter_by(customer_id = customer_id, product_id=product_id).first()
+
+        if existing_review:
+            return {"error": "You have already reviewed this product!"}, 422
+        
+        new_review = Review(
+            review=review_text,
+            rating=rating,
+            customer_id=customer_id,
+            product_id=product_id
+        )
+        db.session.add(new_review)
+        db.session.commit()
+
+        new_review_dict = {
+            "review": new_review.review,
+            "rating": new_review.rating,
+            "customer_id": new_review.customer_id,
+            "product_id": new_review.product_id
+        }
+
+        response = make_response(jsonify(new_review_dict), 201)
+        
+        return response
         
 class ReviewByID(Resource):
     def get(self, id):
