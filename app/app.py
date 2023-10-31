@@ -57,10 +57,20 @@ class Login(Resource):
             return customer.to_dict(), 201
         else:
             return {"error": "invalid username or password"}, 401
+        
+class Logout(Resource):
+    def delete(self):
+        if session.get('customer_id'):
+            session['customer_id'] = None
+            return {'info': 'customer logged out successfully'}, 200
+        else:
+            return {'error': 'not logged in!'}, 401
+
 
 api.add_resource(Index, "/")
 api.add_resource(Signup, "/signup", endpoint="signup")
 api.add_resource(Login, "/login", endpoint="login")
+api.add_resource(Logout, "/logout", endpoint="logout")
 
 if __name__ == "__main__":
     app.run(port=5555, debug=True)
