@@ -14,7 +14,7 @@ class Customer(db.Model, SerializerMixin):
     __tablename__='customers'
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String, nullable=False)
-    email = db.Column(db.String, unique=True, nullable=False)
+    email = db.Column(db.String, nullable=False)
     _password_hash = db.Column(db.String)
 
     #relationship
@@ -34,8 +34,9 @@ class Customer(db.Model, SerializerMixin):
         self._password_hash = password_hash.decode('utf-8')
 
     def authenticate(self, password):
-        return bcrypt.check_password_hash(self._password_hash, password.encode('utf-8'))
-
+        return bcrypt.check_password_hash(
+            self._password_hash, password.encode('utf-8')
+        )
         
 class Product(db.Model, SerializerMixin):
     __tablename__='products'

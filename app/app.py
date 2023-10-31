@@ -6,6 +6,7 @@ from flask_cors import CORS
 from models import db, Customer, Product, CustomerProduct, Review
 
 app = Flask(__name__)
+app.secret_key = "aicila@2016"
 app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///app.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.json.compact = False
@@ -27,9 +28,9 @@ class Index(Resource):
 
 class Signup(Resource):
     def post(self):
-        username = request.get_json("username")
-        email = request.get_json("email")
-        password = request.get_json("password")
+        username = request.get_json().get("username")
+        email = request.get_json().get("email")
+        password = request.get_json().get("password")
 
         if username and email and password:
             new_customer = Customer(username=username, email=email)
@@ -45,15 +46,15 @@ class Signup(Resource):
     
 class Login(Resource):
     def post(self):
-        username = request.get_json("username")
-        password = request.get_json("password")
+        username = request.get_json().get("username")
+        password = request.get_json().get("password")
 
         customer = Customer.query.filter(Customer.username==username).first()
 
         if customer and customer.authenticate(password):
             session['customer_id'] = customer.id
             
-            return customer.to_dict(), 200
+            return customer.to_dict(), 201
         else:
             return {"error": "invalid username or password"}, 401
 

@@ -1,8 +1,8 @@
-"""creates tables, customers, products, reviews, customer_products
+"""creates tables customers, products, reviews, customer_products
 
-Revision ID: 150055957f50
+Revision ID: 4476dc9db5b8
 Revises: 
-Create Date: 2023-10-30 21:49:09.429738
+Create Date: 2023-10-31 08:21:19.209160
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '150055957f50'
+revision = '4476dc9db5b8'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -22,9 +22,8 @@ def upgrade():
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('username', sa.String(), nullable=False),
     sa.Column('email', sa.String(), nullable=False),
-    sa.Column('password_hash', sa.String(), nullable=True),
-    sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('email')
+    sa.Column('_password_hash', sa.String(), nullable=True),
+    sa.PrimaryKeyConstraint('id')
     )
     op.create_table('products',
     sa.Column('id', sa.Integer(), nullable=False),
