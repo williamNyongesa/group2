@@ -19,7 +19,7 @@ CORS(app, origins="*")
 
 class Index(Resource):
     def get(self):
-        response_body = "Welcome Home!"
+        response_body = "Welcome to E-shop Product Feedback Page!"
         status= 200
         headers = {}
 
