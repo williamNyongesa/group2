@@ -67,10 +67,45 @@ class Logout(Resource):
             return {'error': 'not logged in!'}, 401
 
 
+class ReviewById(Resource):
+    def get(self, id):
+        review = Review.query.filter_by(id=id).first()
+        if review:
+            return {'id':review.id, 'review': review.review, 'rating':review.rating}
+        return {'error':'Review not found'}, 404
+
+
+    def delete(self, id):
+        review = Review.query.filter_by(id=id).first()
+
+        db.session.delete(review)
+        db.session.commit()
+
+        return make_response('Review deleted successfully', 200 )
+
+
+    # def patch(self, id):
+    #     args = parser.parse_args()
+    #     review = Review.query.get(id)
+
+    #     if not review:
+    #         return {'error': 'Review not found'}, 404
+
+    #     if 'review' in args:
+    #         review.review = args['review']
+    #     if 'rating' in args:
+    #         review.rating = args['rating']
+
+    #     db.session.commit()
+
+    #     return {'message': 'Review updated successfully'}, 200
+
+
 api.add_resource(Index, "/")
 api.add_resource(Signup, "/signup", endpoint="signup")
 api.add_resource(Login, "/login", endpoint="login")
 api.add_resource(Logout, "/logout", endpoint="logout")
+api.add_resource(ReviewById, "/reviews/<int:id>", endpoint="reviews/<int:id>")
 
 if __name__ == "__main__":
     app.run(port=5555, debug=True)
