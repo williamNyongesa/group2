@@ -1,4 +1,4 @@
-from flask import Flask,request,session
+from flask import Flask,request,session, make_response, jsonify
 from flask_migrate import Migrate
 from flask_restful import Api, Resource
 from flask_cors import CORS
@@ -19,7 +19,7 @@ CORS(app, origins="*")
 
 class Index(Resource):
     def get(self):
-        response_body = "Welcome to E-shop Product Feedback Page!"
+        response_body = "Welcome to E-shop Product Feedback Rest API!"
         status= 200
         headers = {}
 
@@ -65,12 +65,93 @@ class Logout(Resource):
             return {'info': 'customer logged out successfully'}, 200
         else:
             return {'error': 'not logged in!'}, 401
+        
+
+class Reviews(Resource):
+    def get(self):
+        reviews = Review.query.all()
+
+        review_list = []
+        for review in reviews:
+            review_dict = {
+                "review": review.review,
+                "rating": review.rating,
+                "customer_id": review. customer_id,
+                "product_id": review.product_id
+            }
+            review_list.append(review_dict)
+
+        return make_response(jsonify(review_list), 200)
+    
+    def post(self):
+        reviews = Review.query.all()
+        
+class ReviewByID(Resource):
+    def get(self, id):
+        review = Review.query.filter_by(id=id).first()
+
+        if review:
+            review_dict = {
+                "review": review.review,
+                "rating": review.rating,
+                "customer_id": review. customer_id,
+                "product_id": review.product_id
+            }
+            
+            response = make_response(jsonify(review_dict), 200)
+
+        else:
+            response = {"error": "resource not found"}, 404
+        
+        return response
+
+    def patch(self,id):
+        review = Review.query.filter_by(id=id).first()
+
+        if review:
+            
+            for attr in request.form:
+                setattr(review, attr, request.form[attr])
+
+                db.session.add(review)
+                db.session.commit()
+
+                review_dict = {
+                    "review": review.review,
+                    "rating": review.rating,
+                    "customer_id": review.customer_id,
+                    "product_id": review.product_id
+                }
+                
+                response = make_response(
+                    jsonify(review_dict),
+                    200
+                )
+
+        else:
+            response = {"error": "review not found"}, 404
+        
+        return response
+    def delete(self, id):
+        review = Review.query.filter_by(id=id).first()
+
+        if review:
+            db.session.delete(review)
+            db.session.commit()
+
+            response = make_response(jsonify({}), 200)
+        else:
+           response = {"error": "review not found"}, 404
+
+        return response
 
 
 api.add_resource(Index, "/")
 api.add_resource(Signup, "/signup", endpoint="signup")
 api.add_resource(Login, "/login", endpoint="login")
 api.add_resource(Logout, "/logout", endpoint="logout")
+api.add_resource(Reviews, "/reviews", endpoint="reviews")
+api.add_resource(ReviewByID, "/reviews/<int:id>", endpoint= "/reviews/<int:id>")
 
 if __name__ == "__main__":
     app.run(port=5555, debug=True)

@@ -42,6 +42,7 @@ class Product(db.Model, SerializerMixin):
     __tablename__='products'
 
     serialize_rules = ("-reviews.product", "customers.product",)
+    
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
     image = db.Column(db.String, nullable=False)
