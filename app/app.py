@@ -1,4 +1,4 @@
-from flask import Flask,request,session
+from flask import Flask,request,session, make_response, jsonify
 from flask_migrate import Migrate
 from flask_restful import Api, Resource
 from flask_cors import CORS
@@ -67,10 +67,43 @@ class Logout(Resource):
             return {'error': 'not logged in!'}, 401
 
 
+class Reviews(Resource):
+    def get(self):
+        
+        reviews = Review.query.all()
+        review_list = []
+        for review in reviews:
+            review_dict = {
+                "rating":review.rating, 
+                "review":review.review
+            }
+            review_list.append(review_dict)
+            response = make_response(jsonify(review_list), 200)
+        return response
+
+    def post(self):
+        new_item = Review(
+            review = request.get_json()["review"],
+            rating = request.get_json()["rating"]
+        
+        )
+        db.session.add(new_item)
+        db.session.commit()
+        # response_body = (f"{new_item.to_dict} is posted successfully")
+        response_dict = new_item.to_dict
+        response = make_response(jsonify(response_dict), 201)
+        return response
+
+
+
+
 api.add_resource(Index, "/")
 api.add_resource(Signup, "/signup", endpoint="signup")
 api.add_resource(Login, "/login", endpoint="login")
 api.add_resource(Logout, "/logout", endpoint="logout")
+api.add_resource(Reviews, "/reviews", endpoint= "reviews")
+# api.add_resource(Reviews, "/ratings", endpoint= "reviews")
+
 
 if __name__ == "__main__":
     app.run(port=5555, debug=True)
