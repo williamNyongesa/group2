@@ -18,6 +18,24 @@ db.init_app(app)
 api = Api(app)
 CORS(app, origins="*")
 
+@app.before_request
+def check_if_logged_in():
+    if "customer_id" not in session:
+        if request.endpoint not in ["login", "logout", "products"]:
+            return {"error": "unauthorized access!"}, 401
+        
+class CheckSession(Resource):
+    def get(self):
+        if session.get('user_id'):
+            customer = Customer.query.filter(Customer.id==session['customer_id']).first()
+
+            customer_dict = {
+                "username": customer.username,
+                "password": customer._password_hash
+            }
+            return customer_dict, 200
+        
+        return {'error': 'Resource unavailable'}
 
 class Index(Resource):
     def get(self):
