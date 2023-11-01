@@ -21,12 +21,12 @@ CORS(app, origins="*")
 @app.before_request
 def check_if_logged_in():
     if "customer_id" not in session:
-        if request.endpoint not in ["login", "logout", "products"]:
+        if request.endpoint not in ["signup","login", "logout", "products"]:
             return {"error": "unauthorized access!"}, 401
         
 class CheckSession(Resource):
     def get(self):
-        if session.get('user_id'):
+        if session.get('customer_id'):
             customer = Customer.query.filter(Customer.id==session['customer_id']).first()
 
             customer_dict = {
@@ -91,17 +91,21 @@ class Reviews(Resource):
     def get(self):
         reviews = Review.query.all()
 
-        review_list = []
-        for review in reviews:
-            review_dict = {
-                "review": review.review,
-                "rating": review.rating,
-                "customer_id": review. customer_id,
-                "product_id": review.product_id
-            }
-            review_list.append(review_dict)
+        reviews_list = [review.to_dict() for review in reviews]
 
-        return make_response(jsonify(review_list), 200)
+        return make_response(jsonify(reviews_list), 200)
+
+        # review_list = []
+        # for review in reviews:
+        #     review_dict = {
+        #         "review": review.review,
+        #         "rating": review.rating,
+        #         "customer_id": review. customer_id,
+        #         "product_id": review.product_id
+        #     }
+        #     review_list.append(review_dict)
+
+        # return make_response(jsonify(review_list), 200)
     
     def post(self):
         customer_id = session.get("customer_id")

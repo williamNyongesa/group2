@@ -1,7 +1,7 @@
 from random import randint, choice as rc, sample
 from faker import Faker
 from app import app
-from models import db, Customer, Product, Review, CustomerProduct
+from models import db, Customer, Product, Review
 
 fake = Faker()
 
@@ -12,7 +12,7 @@ with app.app_context():
         Customer.query.delete()
         Product.query.delete()
         Review.query.delete()
-        CustomerProduct.query.delete()
+        
 
     def seed_customer():
         print("seeding customers...")
@@ -66,25 +66,25 @@ with app.app_context():
         db.session.commit()
 
 
-    def seed_customer_products():
-        print("seedng customer_products...")    
-        customers = Customer.query.all() 
-        products = Product.query.all()  
-        for customer in customers:
-            selected_products = sample(products, randint(1, len(products)))
-            for product in selected_products:
-                customer_product = CustomerProduct(
-                    customer_id=customer.id,
-                    product_id=product.id
-                )
-                db.session.add(customer_product)
+    # def seed_customer_products():
+    #     print("seedng customer_products...")    
+    #     customers = Customer.query.all() 
+    #     products = Product.query.all()  
+    #     for customer in customers:
+    #         selected_products = sample(products, randint(1, len(products)))
+    #         for product in selected_products:
+    #             customer_product = CustomerProduct(
+    #                 customer_id=customer.id,
+    #                 product_id=product.id
+    #             )
+    #             db.session.add(customer_product)
 
-        db.session.commit()
-        print("Completed!")
+    #     db.session.commit()
+    #     print("Completed!")
 
     if __name__ == "__main__":
         clear_database()
         seed_customer()
         seed_products()
         seed_reviews()
-        seed_customer_products()
+        # seed_customer_products()
