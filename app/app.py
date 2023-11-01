@@ -3,10 +3,9 @@ from flask_migrate import Migrate
 from flask_restful import Api, Resource
 from flask_cors import CORS
 
-from models import db, Customer, Product, CustomerProduct, Review
-
+from models import db, Customer, Product, Review
 app = Flask(__name__)
-app.secret_key = "aicila@2016"
+app.secret_key = "b':\xa5\x9b$\xde\xbd\xb4\x90\xc4\xdb\x14(2\xdc\x06g'"
 app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///app.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.json.compact = False
@@ -24,7 +23,6 @@ class Index(Resource):
         headers = {}
 
         return (response_body, status, headers)
-    
 
 class Signup(Resource):
     def post(self):
@@ -43,7 +41,6 @@ class Signup(Resource):
             return new_customer.to_dict(), 201
 
         return {"error": "Customer details must be provided!"}, 422
-    
 class Login(Resource):
     def post(self):
         username = request.get_json().get("username")
@@ -53,11 +50,9 @@ class Login(Resource):
 
         if customer and customer.authenticate(password):
             session['customer_id'] = customer.id
-            
             return customer.to_dict(), 201
         else:
             return {"error": "invalid username or password"}, 401
-        
 class Logout(Resource):
     def delete(self):
         if session.get('customer_id'):
@@ -83,16 +78,19 @@ class Reviews(Resource):
 
     def post(self):
         new_item = Review(
+            customer_id = request.get_json()["customer_id"],
+            product_id = request.get_json()["product_id"],
             review = request.get_json()["review"],
             rating = request.get_json()["rating"]
-        
         )
         db.session.add(new_item)
         db.session.commit()
-        # response_body = (f"{new_item.to_dict} is posted successfully")
-        response_dict = new_item.to_dict
+
+        response_dict = new_item.to_dict()
         response = make_response(jsonify(response_dict), 201)
         return response
+
+
 
 
 
@@ -102,7 +100,6 @@ api.add_resource(Signup, "/signup", endpoint="signup")
 api.add_resource(Login, "/login", endpoint="login")
 api.add_resource(Logout, "/logout", endpoint="logout")
 api.add_resource(Reviews, "/reviews", endpoint= "reviews")
-# api.add_resource(Reviews, "/ratings", endpoint= "reviews")
 
 
 if __name__ == "__main__":

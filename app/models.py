@@ -9,7 +9,7 @@ bcrypt = Bcrypt()
 
 class Customer(db.Model, SerializerMixin):
 
-    serialize_rules = ("-reviews.customer", "-products.customer",)
+    serialize_rules = ("-reviews.customer",)
 
     __tablename__='customers'
     id = db.Column(db.Integer, primary_key=True)
@@ -18,8 +18,7 @@ class Customer(db.Model, SerializerMixin):
     _password_hash = db.Column(db.String)
 
     #relationship
-    reviews = db.relationship('Review', backref='customers')
-    products = db.relationship('Product', secondary='customer_products', back_populates='customers')
+    reviews = db.relationship('Review', backref='customer')
 
     def __repr__(self):
         return f'name {self.username}'
@@ -41,7 +40,7 @@ class Customer(db.Model, SerializerMixin):
 class Product(db.Model, SerializerMixin):
     __tablename__='products'
 
-    serialize_rules = ("-reviews.product", "customers.product",)
+    serialize_rules = ("-reviews.product",)
     
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
@@ -50,8 +49,7 @@ class Product(db.Model, SerializerMixin):
     in_stock = db.Column(db.Boolean)
 
     #relationship
-    reviews = db.relationship('Review', backref='products')
-    customers = db.relationship('Customer', secondary='customer_products', back_populates='products')
+    reviews = db.relationship('Review', backref='product')
 
     def __repr__(self):
         return f'Product Name: {self.name} costs {self.price}'
@@ -61,7 +59,7 @@ class Product(db.Model, SerializerMixin):
 class Review(db.Model, SerializerMixin):
     __tablename__='reviews'
 
-    serialize_rules = ("-customer.reviews", "-product.reviews")
+    serialize_rules = ("-customer.reviews", "-product.reviews",)
     
     id = db.Column(db.Integer, primary_key=True)
     review = db.Column(db.String, nullable=False)
@@ -72,10 +70,3 @@ class Review(db.Model, SerializerMixin):
     product_id = db.Column(db.Integer, db.ForeignKey('products.id'))
 
 
-    #relationship btwn customer and product
-class CustomerProduct(db.Model, SerializerMixin):
-    __tablename__='customer_products'
-
-    id =db.Column(db.Integer, primary_key=True)
-    customer_id = db.Column(db.Integer, db.ForeignKey('customers.id'))
-    product_id = db.Column(db.Integer, db.ForeignKey('products.id'))
