@@ -90,7 +90,32 @@ class Reviews(Resource):
         response = make_response(jsonify(response_dict), 201)
         return response
 
+class Reviews_id(Resource):
+    def get(self, id):
+        review = Review.query.filter_by(id=id).first()
+        if review:
+            return {'id':review.id, 'review': review.review, 'rating':review.rating}
+        else:
+            return {'error':'Review not found'}, 404
+    
+    def patch(self, id):
+        review = Review.query.filter_by(id=id).first()
+        for attr in request.get_json():
+            setattr(review,attr,request.get_json()[attr])
+            db.session.add(review)
+            db.session.commit()
+            review_to_dict = review.to_dict()
+            response = make_response(jsonify(review_to_dict),200)
+            response.content_type = "application/json"
+            return response
 
+        
+    def delete(self, id):
+        item = Review.query.filter_by(id=id).first()
+        response_body = f" id {id} Deleted"
+        return make_response (jsonify(response_body), 201)
+        db.session.delete(item)
+        db.session.commit()
 
 
 
@@ -100,6 +125,7 @@ api.add_resource(Signup, "/signup", endpoint="signup")
 api.add_resource(Login, "/login", endpoint="login")
 api.add_resource(Logout, "/logout", endpoint="logout")
 api.add_resource(Reviews, "/reviews", endpoint= "reviews")
+api.add_resource(Reviews_id, "/reviews/<int:id>", endpoint="reviews/<int:id>")
 
 
 if __name__ == "__main__":
