@@ -113,9 +113,9 @@ class Reviews_id(Resource):
     def delete(self, id):
         item = Review.query.filter_by(id=id).first()
         response_body = f" id {id} Deleted"
-        return make_response (jsonify(response_body), 201)
         db.session.delete(item)
         db.session.commit()
+        return make_response (jsonify(response_body), 201)
 
 
 
