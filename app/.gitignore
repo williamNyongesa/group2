@@ -1,2 +1,4 @@
-instance
-__pycache__
+instance/*
+!instance/.gitignore
+.webassets-cache
+.env

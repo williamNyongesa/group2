@@ -2,6 +2,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy_serializer import SerializerMixin
 from flask_bcrypt import Bcrypt
 from sqlalchemy.ext.hybrid import hybrid_property
+from sqlalchemy.orm import validates
 
 
 db=SQLAlchemy()
@@ -14,8 +15,8 @@ class Customer(db.Model, SerializerMixin):
 
     __tablename__='customers'
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String, nullable=False)
-    email = db.Column(db.String, nullable=False)
+    username = db.Column(db.String, nullable=False, unique=True)
+    email = db.Column(db.String, nullable=False, unique=True)
     _password_hash = db.Column(db.String)
 
     #relationship
@@ -52,12 +53,18 @@ class Product(db.Model, SerializerMixin):
 
     #relationship
     reviews = db.relationship('Review', backref='product')
-    
 
+    
     def __repr__(self):
         return f'Product Name: {self.name} costs {self.price}'
 
-
+    @validates("price")
+    def validate_price(self, key, price):
+        price = int(price)
+        if price < 1 or price > 50:
+            raise ValueError("Price must be between 1 and 50")
+        
+        return price
 
 class Review(db.Model, SerializerMixin):
     __tablename__='reviews'
@@ -71,3 +78,16 @@ class Review(db.Model, SerializerMixin):
     #relationship
     customer_id = db.Column(db.Integer, db.ForeignKey('customers.id'))
     product_id = db.Column(db.Integer, db.ForeignKey('products.id'))
+
+
+    def __repr__(self):
+        return f'Rating: {self.rating}, Review: {self.review}'
+
+    @validates("rating")
+    def rating(self, key, rating):
+        rating = int(rating)
+        if rating < 1 or rating > 5:
+            raise ValueError("Rating must be between 1 and 5")
+
+        return rating
+

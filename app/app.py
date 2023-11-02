@@ -3,12 +3,17 @@ from flask_migrate import Migrate
 from flask_restful import Api, Resource
 from flask_cors import CORS
 from werkzeug.exceptions import NotFound
-
+import os
 from models import db, Customer, Product, Review
 
-app = Flask(__name__)
-app.secret_key = "b'\xd4\xfa\x1d\x0e\x02\x87\x91\x96V\xb5H{\xd3\xd5\x1ee'"
+from dotenv import load_dotenv
+load_dotenv()
 
+app = Flask(__name__)
+# app.secret_key = os.getenv("MY_KEY")
+app.secret_key ="b'\xd4\xfa\x1d\x0e\x02\x87\x91\x96V\xb5H{\xd3\xd5\x1ee'"
+
+# app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DATABASE_URI")
 app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///app.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.json.compact = False
@@ -22,7 +27,7 @@ CORS(app, origins="*")
 @app.before_request
 def check_if_logged_in():
     if "customer_id" not in session:
-        if request.endpoint not in ["signup","login", "logout", "products"]:
+        if request.endpoint not in ["signup","login", "products"]:
             return {"error": "unauthorized access!"}, 401
         
 class CheckSession(Resource):
@@ -66,6 +71,7 @@ class Signup(Resource):
         return {"error": "Customer details must be provided!"}, 422
     
 class Login(Resource):
+
     def post(self):
         username = request.get_json().get("username")
         password = request.get_json().get("password")
@@ -75,7 +81,9 @@ class Login(Resource):
         if customer and customer.authenticate(password):
             session['customer_id'] = customer.id
             
-            return customer.to_dict(), 201
+            customer_dict = customer.to_dict()
+
+            return make_response(jsonify(customer_dict), 201)
         else:
             return {"error": "invalid username or password"}, 401
         
@@ -92,21 +100,24 @@ class Reviews(Resource):
     def get(self):
         reviews = Review.query.all()
 
-        reviews_list = [review.to_dict() for review in reviews]
+        # reviews_list = [review.to_dict() for review in reviews]
 
-        return make_response(jsonify(reviews_list), 200)
+        # return make_response(jsonify(reviews_list), 200)
 
-        # review_list = []
-        # for review in reviews:
-        #     review_dict = {
-        #         "review": review.review,
-        #         "rating": review.rating,
-        #         "customer_id": review. customer_id,
-        #         "product_id": review.product_id
-        #     }
-        #     review_list.append(review_dict)
+    
 
-        # return make_response(jsonify(review_list), 200)
+        reviews_list = []
+        for review in reviews:
+            review_dict = {
+                "rating": review.rating,
+                "review": review.review,
+                "customer_id": review.customer_id,
+                "product_id": review.product_id
+            }
+            reviews_list.append(review_dict)
+
+        response = make_response(jsonify(reviews_list), 200)
+        return response
     
     def post(self):
         customer_id = session.get("customer_id")
@@ -168,8 +179,9 @@ class ReviewByID(Resource):
     def patch(self,id):
         review = Review.query.filter_by(id=id).first()
 
+
+        #using form data
         if review:
-            
             for attr in request.form:
                 setattr(review, attr, request.form[attr])
 
@@ -187,11 +199,22 @@ class ReviewByID(Resource):
                     jsonify(review_dict),
                     200
                 )
-
         else:
             response = {"error": "review not found"}, 404
         
         return response
+
+        #using raw json data
+    #   for attr in request.get_json():
+    #         setattr(review,attr,request.get_json()[attr])
+    #         db.session.add(review)
+    #         db.session.commit()
+    #         review_to_dict = review.to_dict()
+    #         response = make_response(jsonify(review_to_dict),200)
+    #         response.content_type = "application/json"
+    #         return response
+    
+
     def delete(self, id):
         review = Review.query.filter_by(id=id).first()
 
@@ -236,12 +259,6 @@ class Customers(Resource):
 
         return make_response(jsonify(customer_list), 200)
     
-@app.errorhandler(NotFound)
-def handle_not_found(e):
-    response = make_response(jsonify({"error":"Resource not found in the server"}), 404)
-
-    return response
-
 
 api.add_resource(Index, "/")
 api.add_resource(Signup, "/signup", endpoint="signup")
@@ -251,6 +268,12 @@ api.add_resource(Reviews, "/reviews", endpoint="reviews")
 api.add_resource(ReviewByID, "/reviews/<int:id>", endpoint= "/reviews/<int:id>")
 api.add_resource(Products, "/products", endpoint="products")
 api.add_resource(Customers, "/customers", endpoint="customers")
+
+@app.errorhandler(NotFound)
+def handle_not_found(e):
+    response = make_response(jsonify({"error":"Resource not found in the server"}), 404)
+
+    return response
 
 if __name__ == "__main__":
     app.run(port=5555, debug=True)
