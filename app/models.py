@@ -86,11 +86,11 @@ class Review(db.Model, SerializerMixin):
     customer_id = db.Column(db.Integer, db.ForeignKey('customers.id'))
     product_id = db.Column(db.Integer, db.ForeignKey('products.id'))
 
-    @validates("rating")
-    def rating(self, key, rating):
-        rating = int(rating)
-        if rating < 1 or rating > 5:
-            raise ValueError("Rating must be between 1 and 5")
+    # @validates("rating")
+    # def rating(self, key, rating):
+    #     rating = int(rating)
+    #     if rating < 1 or rating > 5:
+    #         raise ValueError("Rating must be between 1 and 5")
 
-        return rating
+    #     return rating
 
