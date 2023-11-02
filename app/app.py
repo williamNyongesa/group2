@@ -2,8 +2,10 @@ from flask import Flask,request,session, make_response, jsonify
 from flask_migrate import Migrate
 from flask_restful import Api, Resource
 from flask_cors import CORS
-
+from werkzeug.exceptions import NotFound
 from models import db, Customer, Product, Review
+
+
 app = Flask(__name__)
 app.secret_key = "b':\xa5\x9b$\xde\xbd\xb4\x90\xc4\xdb\x14(2\xdc\x06g'"
 app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///app.db"
@@ -15,6 +17,26 @@ db.init_app(app)
 
 api = Api(app)
 CORS(app, origins="*")
+
+@app.before_request
+def check_if_logged_in():
+    if "customer_id" not in session:
+        if request.endpoint not in ["signup","login", "products"]:
+            return {"error": "unauthorized access!"}, 401
+        
+class CheckSession(Resource):
+    def get(self):
+        if session.get('customer_id'):
+            customer = Customer.query.filter(Customer.id==session['customer_id']).first()
+
+            customer_dict = {
+                "username": customer.username,
+                "password": customer._password_hash
+            }
+            return customer_dict, 200
+        
+        return {'error': 'Resource unavailable'}
+    
 
 class Index(Resource):
     def get(self):
@@ -113,12 +135,41 @@ class Reviews_id(Resource):
     def delete(self, id):
         item = Review.query.filter_by(id=id).first()
         response_body = f" id {id} Deleted"
-        return make_response (jsonify(response_body), 201)
         db.session.delete(item)
         db.session.commit()
+        return make_response (jsonify(response_body), 201)
 
 
+class Products(Resource):
+    def get(self):
+        products = Product.query.all()
 
+        product_list = []
+        for product in products:
+            product_dict = {
+                "name": product.name,
+                "image": product.image,
+                "price": product. price,
+            }
+            product_list.append(product_dict)
+
+        return make_response(jsonify(product_list), 200)
+    
+
+class Customers(Resource):
+    def get(self):
+        customers = Customer.query.all()
+
+        customer_list = []
+        for customer in customers:
+            customer_dict = {
+                "username": customer.username,
+                "email": customer.email,
+                
+            }
+            customer_list.append(customer_dict)
+
+        return make_response(jsonify(customer_list), 200)
 
 api.add_resource(Index, "/")
 api.add_resource(Signup, "/signup", endpoint="signup")
@@ -126,6 +177,14 @@ api.add_resource(Login, "/login", endpoint="login")
 api.add_resource(Logout, "/logout", endpoint="logout")
 api.add_resource(Reviews, "/reviews", endpoint= "reviews")
 api.add_resource(Reviews_id, "/reviews/<int:id>", endpoint="reviews/<int:id>")
+api.add_resource(Products, "/products", endpoint="products")
+api.add_resource(Customers, "/customers", endpoint="customers")
+
+@app.errorhandler(NotFound)
+def handle_not_found(e):
+    response = make_response(jsonify({"error":"Resource not found in the server"}), 404)
+
+    return response
 
 
 if __name__ == "__main__":
