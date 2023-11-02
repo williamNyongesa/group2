@@ -1,6 +1,8 @@
+import "./home.css";
+
 const Home = ({ products }) => {
     return ( 
-        <div>
+        <div className="items">
             {products.map((product) => (
                 <div key={product.id}>
                     <h1>{product.name}</h1>

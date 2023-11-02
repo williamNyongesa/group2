@@ -2,6 +2,8 @@ import React from "react";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import { useNavigate } from "react-router-dom";
 import * as Yup from "yup";
+import './sign.css';
+
 
 const SignUp = () => {
   const navigate = useNavigate();
