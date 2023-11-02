@@ -16,13 +16,13 @@ migrate = Migrate(app, db)
 db.init_app(app)
 
 api = Api(app)
-CORS(app, origins="*")
+CORS(app, origins="localhost:3000")
 
-@app.before_request
-def check_if_logged_in():
-    if "customer_id" not in session:
-        if request.endpoint not in ["signup","login", "products"]:
-            return {"error": "unauthorized access!"}, 401
+# @app.before_request
+# def check_if_logged_in():
+#     if "customer_id" not in session:
+#         if request.endpoint not in ["signup","login", "products"]:
+#             return {"error": "unauthorized access!"}, 401
         
 class CheckSession(Resource):
     def get(self):
@@ -159,16 +159,13 @@ class Products(Resource):
 class Customers(Resource):
     def get(self):
         customers = Customer.query.all()
-
         customer_list = []
         for customer in customers:
             customer_dict = {
                 "username": customer.username,
                 "email": customer.email,
-                
             }
             customer_list.append(customer_dict)
-
         return make_response(jsonify(customer_list), 200)
 
 api.add_resource(Index, "/")
