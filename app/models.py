@@ -83,11 +83,11 @@ class Review(db.Model, SerializerMixin):
     def __repr__(self):
         return f'Rating: {self.rating}, Review: {self.review}'
 
-    @validates("rating")
-    def rating(self, key, rating):
-        rating = int(rating)
-        if rating < 1 or rating > 5:
-            raise ValueError("Rating must be between 1 and 5")
+    # @validates("rating")
+    # def rating(self, key, rating):
+    #     rating = int(rating)
+    #     if rating < 1 or rating > 5:
+    #         raise ValueError("Rating must be between 1 and 5")
 
-        return rating
+    #     return rating
 

@@ -36,6 +36,9 @@ const Home = ({ products }) => {
           <h2 css={headingStyles}>Name: {product.name}</h2>
           <p>Price: ${product.price}</p>
           <img src={product.image} alt="product" css={imageStyles} />
+          <p style={{ fontWeight: 'bold', color: 'green' }}>
+            In Stock: {product.in_stock ? 'Yes' : 'No'}
+          </p>
         </div>
       ))}
     </div>

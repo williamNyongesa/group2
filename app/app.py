@@ -24,11 +24,11 @@ db.init_app(app)
 api = Api(app)
 CORS(app, origins="*")
 
-@app.before_request
-def check_if_logged_in():
-    if "customer_id" not in session:
-        if request.endpoint not in ["signup","login", "products"]:
-            return {"error": "unauthorized access!"}, 401
+# @app.before_request
+# def check_if_logged_in():
+#     if "customer_id" not in session:
+#         if request.endpoint not in ["signup","login", "products"]:
+#             return {"error": "unauthorized access!"}, 401
         
 class CheckSession(Resource):
     def get(self):
@@ -238,6 +238,7 @@ class Products(Resource):
                 "name": product.name,
                 "image": product.image,
                 "price": product. price,
+                "in_stock":product.in_stock
             }
             product_list.append(product_dict)
 
