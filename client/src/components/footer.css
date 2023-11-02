@@ -1,0 +1,125 @@
+/* Footer container */
+.footer {
+    background-color: #e49b13;
+    color: #fff;
+    padding: 30px 0;
+}
+
+.footer-content {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+}
+
+/* Footer sections */
+.footer-section {
+    text-align: center;
+    margin: 10px;
+}
+
+.footer-section h4 {
+    font-size: 18px;
+    margin: 0;
+}
+
+.footer-section p {
+    margin: 5px 0;
+}
+
+/* Social icons */
+.social-icons {
+    list-style: none;
+    padding: 0;
+    display: flex;
+}
+
+.social-icons li {
+    margin: 0 10px;
+    font-size: 24px;
+}
+
+.social-icons a {
+    color: #fff;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.social-icons a:hover {
+    color: #2315e6; /* Change color on hover */
+}
+
+/* Managerial staff */
+.col {
+    text-align: center;
+}
+
+/* Comment section */
+.comment-section {
+    padding: 20px;
+    background-color: #e49b13; 
+    color: #fff;
+}
+
+.comment-section h3 {
+    font-size: 20px;
+}
+
+.comment-section textarea {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #080808; 
+    border-radius: 5px;
+}
+
+.comment-section button {
+    background-color: #13e4c8; 
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background-color 0.3s; /* Add transition for background color */
+}
+
+.comment-section button:hover {
+    background-color: #2315e6; 
+}
+
+.comment-list {
+    margin-top: 20px;
+}
+
+.comment-list ul {
+    list-style: none;
+    padding: 0;
+}
+
+.comment-list li {
+    margin: 10px 0;
+}
+
+.comment-list p {
+    margin: 0;
+}
+
+/* Footer bottom */
+.footer-bottom {
+    text-align: center;
+    margin-top: 30px;
+}
+
+.footer-bottom h4 {
+    font-size: 18px;
+}
+
+/* Media queries for responsiveness */
+@media (max-width: 768px) {
+    .footer-section {
+        flex-basis: 50%;
+    }
+
+    .col {
+        flex-basis: 50%;
+    }
+}

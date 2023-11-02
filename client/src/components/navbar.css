@@ -1,0 +1,66 @@
+/* Navbar container */
+.navbar {
+    margin: auto;
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #e49b13;
+    color: #fff;
+}
+
+/* logo */
+.navbar-logo {
+    text-align: left;
+    margin: 0;
+    padding: 0;
+}
+
+.company-name {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.company-salutation {
+    font-size: 16px;
+    font-style: italic;
+}
+
+/* Navbar items */
+.navbar-list {
+    list-style: none;
+    display: flex;
+    margin: 0;
+    padding: 0;
+}
+
+.navbar-item {
+    margin: 0 20px;
+    position: relative;
+}
+
+/* Navbar links */
+.navbar-item a {
+    text-decoration: none;
+    color: #fff;
+    transition: color 0.3s;
+}
+
+.navbar-item a:hover {
+    color: #2315e6; /* Change color on hover */
+}
+
+.navbar-item::after {
+    content: '';
+    height: 3px;
+    width: 0;
+    background: aqua;
+    position: absolute;
+    left: 0;
+    bottom: -10px;
+    transition: 0.5s;
+}
+
+.navbar-item:hover::after {
+    width: 100%;
+}
