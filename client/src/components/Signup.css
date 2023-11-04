@@ -1,13 +1,32 @@
 /* Example CSS for the signup form */
 .signup-form-container {
-    display: flex;
+  max-width: 400px;
+  margin: auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  background-color: #f9f9f9;
+    /* display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: center; */
   }
-  
+  .signup-form-container h1 {
+    margin-top: 0;
+    text-align: center;
+    font-weight: bold;
+    color: #333;
+  }
   .signup-form {
-    width: 300px;
-    margin: 20px;
+    max-width: 400px;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    background-color: #f9f9f9;
+    /* width: 300px;
+    margin: 20px; */
   }
   
   .form-group {
@@ -29,20 +48,48 @@
   .error-message {
     color: red;
   }
+
+  /*
+ .input-group {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.input-group label {
+  flex: 1;
+  margin-right: 10px;
+}
+
+.input-group input {
+  flex: 2;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}*/
   
   .submit-button {
-    background-color: #007BFF;
-    color: white;
-    border: none;
+    background-color: #E9D8A6;
+    color: black;
+    border: 1px solid black;
     border-radius: 4px;
     padding: 10px 20px;
     cursor: pointer;
   }
-  
-  .customer-table {
-    width: 100%;
-    margin: 20px;
+
+  .login-link {
+    margin-top: 20px;
+    text-align: center;
+    font-size: 16px;
   }
   
-  /* Additional CSS styles for table appearance if needed */
+  .login-link a {
+    text-decoration: none;
+    color: #f7c305b9;
+    font-weight: bold;
+  }
+  
+  .login-link a:hover {
+    text-decoration: underline;
+  }
   

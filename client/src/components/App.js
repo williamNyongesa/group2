@@ -47,7 +47,7 @@ function App() {
     .then((data) => {
       console.log(products)
       setProducts(data)})
-  }, [products])
+  }, [])
 
   return (
     <div className="App">

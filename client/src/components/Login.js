@@ -5,23 +5,52 @@ import * as yup from 'yup';
 import YupPassword from 'yup-password';
 import { useNavigate } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
+import { Link } from 'react-router-dom';
 
 const loginContainer = css`
   text-align: center;
-  max-width: 400px;
+  max-width: 400px; 
   margin: 0 auto;
+  padding: 20px; 
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  background-color: #f9f9f9;
 `;
+
+const formClass =css`
+text-align: center;
+max-width: 400px; 
+margin: 0 auto;
+padding: 20px; 
+border: 1px solid #ccc;
+border-radius: 5px;
+box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+background-color: #f9f9f9;
+
+`
 
 const formGroup = css`
   margin-bottom: 15px;
 `;
 
 const loginButton = css`
-  background-color: #007bff;
-  color: #fff;
-  border: none;
+  background-color: #E9D8A6;
+   color: black;
+  border: 1px solid black;
+  border-radius: 4px;
   padding: 10px 20px;
   cursor: pointer;
+  
+`;
+
+const signupLink = css`
+  text-decoration: none;
+  color: #007bff;
+  font-weight: bold;
+  &:hover {
+    text-decoration: underline;
+  }
 `;
 
 const Login = () => {
@@ -45,7 +74,7 @@ const Login = () => {
         }}
         validationSchema={errorMessageSchema}
         onSubmit={(values) => {
-          fetch('http://127.0.0.1:5555/login', {
+          fetch('/login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(values),
@@ -68,6 +97,7 @@ const Login = () => {
       >
         {({ errors, touched }) => (
           <Form>
+            <div css={formClass}>
             <div css={formGroup}>
               <label htmlFor="username">Username</label>
               <Field
@@ -95,12 +125,18 @@ const Login = () => {
             <button type="submit" css={loginButton}>
               Login
             </button>
+            </div>
           </Form>
         )}
       </Formik>
+      <div className="link">
+        <div className="login-link">
+          <p>Don't have an account?</p>
+          <Link to="/signup" css={signupLink}>Sign Up Here</Link>
+        </div>
+      </div>
     </div>
   );
 };
 
 export default Login;
-    

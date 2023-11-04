@@ -4,6 +4,7 @@ import { useFormik } from "formik";
 import * as yup from "yup";
 import { useNavigate } from "react-router-dom";
 import { useSnackbar } from "notistack";
+import { Link } from "react-router-dom";
 
 const SignupForm = () => {
   const [refreshPage, setRefreshPage] = useState(false);
@@ -27,7 +28,7 @@ const SignupForm = () => {
     },
     validationSchema: formSchema,
     onSubmit: ({confirmPassword, ...values}) => {
-      fetch("http://127.0.0.1:5555/signup", {
+      fetch("/signup", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -39,7 +40,6 @@ const SignupForm = () => {
             navigate("/login")
           setRefreshPage(!refreshPage);
         }else if (res.status === 422){
-            // return res.json()
             enqueueSnackbar("An error occured", {variant: "error"})
         }
       })
@@ -104,7 +104,10 @@ const SignupForm = () => {
 
         <button type="submit" className="submit-button">Submit</button>
       </form>
-    
+      <div className="login-link">
+         Already registered? 
+        <Link to="/login">Login Here</Link>
+      </div>
     </div>
   );
 };

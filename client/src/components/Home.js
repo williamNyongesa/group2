@@ -1,4 +1,5 @@
 import "./Home.css"
+import { Link } from "react-router-dom";
 import { css } from "@emotion/react";
 
 const productStyles = css`
@@ -37,7 +38,8 @@ const Home = ({ products }) => {
           <p>Price: ${product.price}</p>
           <img src={product.image} alt="product" css={imageStyles} />
           <p style={{ fontWeight: 'bold', color: 'green' }}>
-            In Stock: {product.in_stock ? 'Yes' : 'No'}
+            In Stock: {product.in_stock ? 'Yes' : 'No'}<br></br>
+            <button><Link to={`/products/:id`}>View Product Details</Link></button>
           </p>
         </div>
       ))}

@@ -69,7 +69,7 @@ const ReviewForm = ({ productId, customerId, onSubmit }) => {
 
             </FormControl>
           <FormControl mb={4}>
-            <FormLabel htmlFor="productId">Customer Id:</FormLabel>
+            <FormLabel htmlFor="productId">Product Id:</FormLabel>
             <Field
               as={Input}
               id="productId"
