@@ -16,6 +16,8 @@ app.secret_key ="b'\xd4\xfa\x1d\x0e\x02\x87\x91\x96V\xb5H{\xd3\xd5\x1ee'"
 # app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DATABASE_URI")
 app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///app.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
+
 app.json.compact = False
 
 migrate = Migrate(app, db)
@@ -24,11 +26,11 @@ db.init_app(app)
 api = Api(app)
 CORS(app, origins="*")
 
-# @app.before_request
-# def check_if_logged_in():
-#     if "customer_id" not in session:
-#         if request.endpoint not in ["signup","login", "products"]:
-#             return {"error": "unauthorized access!"}, 401
+@app.before_request
+def check_if_logged_in():
+    if "customer_id" not in session:
+        if request.endpoint not in ["signup","login", "products"]:
+            return {"error": "unauthorized access!"}, 401
         
 class CheckSession(Resource):
     def get(self):
@@ -76,17 +78,22 @@ class Login(Resource):
         username = request.get_json().get("username")
         password = request.get_json().get("password")
 
-        customer = Customer.query.filter(Customer.username==username).first()
+        customer = Customer.query.filter(Customer.username == username).first()
 
-        if customer and customer.authenticate(password):
-            session['customer_id'] = customer.id
-            
-            customer_dict = customer.to_dict()
+        if customer:
+            if customer.authenticate(password):
+                session['customer_id'] = customer.id
 
-            return make_response(jsonify(customer_dict), 201)
+                customer_dict = customer.to_dict()
+                print("Login successful. Customer ID:", customer.id)  
+                return make_response(jsonify(customer_dict), 201)
+            else:
+                print("Invalid password.")  
         else:
-            return {"error": "invalid username or password"}, 401
-        
+            print("Customer not found.")  
+
+        return {"error": "invalid username or password"}, 401
+
 class Logout(Resource):
     def delete(self):
         if session.get('customer_id'):
@@ -109,6 +116,7 @@ class Reviews(Resource):
         reviews_list = []
         for review in reviews:
             review_dict = {
+                "id": review.id,
                 "rating": review.rating,
                 "review": review.review,
                 "customer_id": review.customer_id,
@@ -121,14 +129,23 @@ class Reviews(Resource):
     
     def post(self):
         customer_id = session.get("customer_id")
+        # customer_id = request.get_json().get("customer_id")
         product_id = request.get_json().get("product_id")
         review_text = request.get_json().get("review")
         rating = request.get_json().get("rating")
 
+        # customer_id = session["customer_id"]
+        # product_id = request.form["product_id"]
+        # review_text = request.form["review"]
+        # rating = request.form["rating"]
+
         if customer_id is None:
+            print("You must be logged in to create a review")
             return {"error": "You must be logged in to create a review"}, 401
         
         if product_id is None or review_text is None or rating is None:
+            print(f"Customer Id: {customer_id}Product Id:{product_id}, review:{review_text}, rating:{rating}")
+            print("Product ID, review and rating must be provided to create a review")
             return {"error":"Product ID, review and rating must be provided to create a review"}, 422
         
         #Check if the customer has already reviewed this product
@@ -147,6 +164,7 @@ class Reviews(Resource):
         db.session.commit()
 
         new_review_dict = {
+            "id": new_review.id,
             "review": new_review.review,
             "rating": new_review.rating,
             "customer_id": new_review.customer_id,
@@ -154,7 +172,8 @@ class Reviews(Resource):
         }
 
         response = make_response(jsonify(new_review_dict), 201)
-        
+        app.logger.info(f"Received data: {request.get_json()}")
+
         return response
         
 class ReviewByID(Resource):
@@ -163,6 +182,7 @@ class ReviewByID(Resource):
 
         if review:
             review_dict = {
+                "id": review.id,
                 "review": review.review,
                 "rating": review.rating,
                 "customer_id": review. customer_id,
@@ -189,6 +209,7 @@ class ReviewByID(Resource):
                 db.session.commit()
 
                 review_dict = {
+                    "id": review.id,
                     "review": review.review,
                     "rating": review.rating,
                     "customer_id": review.customer_id,
@@ -224,7 +245,7 @@ class ReviewByID(Resource):
 
             response = make_response(jsonify({}), 200)
         else:
-           response = {"error": "review not found"}, 404
+            response = {"error": "review not found"}, 404
 
         return response
     
@@ -235,6 +256,7 @@ class Products(Resource):
         product_list = []
         for product in products:
             product_dict = {
+                "id": product.id,
                 "name": product.name,
                 "image": product.image,
                 "price": product. price,
@@ -243,6 +265,21 @@ class Products(Resource):
             product_list.append(product_dict)
 
         return make_response(jsonify(product_list), 200)
+    
+class ProductByID(Resource):
+    def get(self, id):
+        product = Product.query.filter_by(id=id).first()
+        if product:
+            product_dict = {
+                "id": product.id,
+                "image":product.image,
+                "name": product.name,
+                "price": product.price,
+                "in_stock": product.in_stock
+            }
+            return make_response(jsonify(product_dict), 200)
+        else:
+            return make_response({"error": "resource not found"}, 404)
     
 
 class Customers(Resource):
@@ -268,6 +305,7 @@ api.add_resource(Logout, "/logout", endpoint="logout")
 api.add_resource(Reviews, "/reviews", endpoint="reviews")
 api.add_resource(ReviewByID, "/reviews/<int:id>", endpoint= "/reviews/<int:id>")
 api.add_resource(Products, "/products", endpoint="products")
+api.add_resource(ProductByID, "/products/<int:id>", endpoint= "/products/<int:id>")
 api.add_resource(Customers, "/customers", endpoint="customers")
 
 @app.errorhandler(NotFound)

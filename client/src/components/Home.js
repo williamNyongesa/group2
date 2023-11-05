@@ -39,8 +39,9 @@ const Home = ({ products }) => {
           <img src={product.image} alt="product" css={imageStyles} />
           <p style={{ fontWeight: 'bold', color: 'green' }}>
             In Stock: {product.in_stock ? 'Yes' : 'No'}<br></br>
-            <button><Link to={`/products/:id`}>View Product Details</Link></button>
-          </p>
+            </p>
+            <button><Link to={`/product/${product.id}`}>View Product Details</Link></button>
+          
         </div>
       ))}
     </div>

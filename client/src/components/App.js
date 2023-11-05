@@ -1,66 +1,63 @@
-import '../App.css';
+import React, { useState, useEffect } from 'react';
+import { Routes, Route, useLocation } from 'react-router-dom';
 import Landing from './Landing';
-import {Routes, Route} from "react-router-dom"
 import Home from './Home';
 import AboutUs from './About';
 import SignupForm from './Signup';
 import Login from './Login';
-import {useState, useEffect} from "react"
 import Footer from './Footer';
 import Reviews from './Reviews';
-import ContactUs from './Contact';
+import Contact from './Contact';
+import Product from './Product';
+import ReviewForm from './ReviewForm';
+import Logout from './Logout';
 
 function App() {
-  const [products, setProducts] = useState([])
-  
-  const [reviews, setReviews] =useState([])
+  const [products, setProducts] = useState([]);
+  const [reviews, setReviews] = useState([]);
+  const location = useLocation();
+  const { state } = location;
 
-  useEffect(() =>{
-      fetch("http://127.0.0.1:5555/reviews")
-      .then(r=>r.json())
-      .then(data => setReviews(data))
-  },[])
+  useEffect(() => {
+    fetch('/reviews')
+      .then((r) => r.json())
+      .then((data) => setReviews(data));
+  }, []);
 
-  const onSubmitReview = (reviewData) => {
-    // Send review data to the server using a fetch POST request
-    fetch('http://127.0.0.1:5555/reviews', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(reviewData),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        // Handle the response (e.g., update reviews state)
-        setReviews([...reviews, data]);
-      })
-      .catch((error) => {
-        // Handle errors
-        console.error('Error posting review:', error);
-      });
+  const handleReviewSubmit = (newReview) => {
+    setReviews([...reviews, newReview]);
   };
 
   useEffect(() => {
-    fetch("http://127.0.0.1:5555/products")
-    .then(r => r.json())
-    .then((data) => {
-      console.log(products)
-      setProducts(data)})
-  }, [])
+    fetch('/products')
+      .then((r) => r.json())
+      .then((data) => setProducts(data));
+  }, []);
 
   return (
     <div className="App">
-     <Routes>
-      <Route element= {<Landing/>}>
-        <Route path= "/" element={<Home products ={products} />} />
-        <Route path= "/about" element={<AboutUs />} />
-        <Route path= "/signup" element={<SignupForm />} />
-        <Route path= "/login" element={<Login />} />
-        <Route path= "/contactus" element={<ContactUs />} />
-        <Route path= "/reviews" element={<Reviews reviews={reviews} onSubmit={onSubmitReview}/>} />
-      </Route>
-    </Routes>
+      <Routes>
+        <Route element={<Landing />}>
+          <Route path="/" element={<Home products={products} />} />
+          <Route path="/about" element={<AboutUs />} />
+          <Route path="/signup" element={<SignupForm />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/product/:id" element={<Product />} />
+          <Route
+            path="/product/:id/review"
+            element={
+              <ReviewForm
+                onSubmit={handleReviewSubmit}
+                productId={state ? state.id : null}
+                customer_id={state ? state.customer_id : null}
+              />
+            }
+          />
+          <Route path="/reviews" element={<Reviews reviews={reviews} />} />
+          <Route path="/logout" element={<Logout />} />
+        </Route>
+      </Routes>
       <Footer />
     </div>
   );

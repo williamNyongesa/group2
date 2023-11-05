@@ -51,6 +51,12 @@ function Landing() {
           </Button>
         </BreadcrumbItem>
 
+        <BreadcrumbItem isCurrentPage>
+          <Button colorScheme="blue">
+            <BreadcrumbLink href="/logout">Logout</BreadcrumbLink>
+          </Button>
+        </BreadcrumbItem>
+
       </Breadcrumb>
       <Outlet />
     </Box>

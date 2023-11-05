@@ -1,15 +1,13 @@
 import { Box, Text, Heading } from '@chakra-ui/react';
-import ReviewForm from './PostReview';
+import ReviewForm from './ReviewForm';
 
-const Reviews = ({ reviews, productId, onSubmit }) => {
+const Reviews = ({ reviews }) => {
   return (
     <Box p={4} fontSize={'lg'}>
       <Heading as="h1" size="xl">
         Product Reviews
       </Heading>
-      <Text>
-          <ReviewForm productId={productId} onSubmit={onSubmit} />
-     </Text>
+      <ReviewForm  />
       {reviews.map((review) => (
         <Box
           key={review.id}
@@ -19,6 +17,9 @@ const Reviews = ({ reviews, productId, onSubmit }) => {
           borderRadius="md"
           mt={4}
         >
+          <Text>
+            Id: {review.id}
+          </Text>
           <Text>
             Customer Id: {review.customer_id}
           </Text>
