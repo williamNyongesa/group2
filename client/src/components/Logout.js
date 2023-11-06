@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useSnackbar } from "notistack";
+
 const Logout = () => {
    const navigate = useNavigate()
    const {enqueueSnackbar} = useSnackbar()
@@ -12,9 +13,9 @@ const handleLogout = () =>{
     })
     .then(r => {
         if(r.status===200){
-            enqueueSnackbar("Log out  successfully!", {variant: "success"})
+            enqueueSnackbar("Logout  successful!", {variant: "success"})
         }else if (r.status===401){
-            enqueueSnackbar("Customer not logged in", {variant: "success"})
+            enqueueSnackbar("Customer not logged in", {variant: "error"})
             navigate("/login")
         }
     })

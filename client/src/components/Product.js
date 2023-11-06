@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import {Link, useParams } from "react-router-dom";
 import { css } from "@emotion/react";
+import ReviewForm from "./ReviewForm";
 
 // const productStyles = css`
 //   display: flex;
@@ -25,8 +26,8 @@ const imageStyles = css`
   max-width: 100%;
 `;
 
-const Product = () => {
-  const { id, customer_id } = useParams();
+const Product = ({loggedInCustomer}) => {
+  const { id} = useParams();
   const [product, setProduct] = useState({});
 
   useEffect(() => {
@@ -56,14 +57,15 @@ const Product = () => {
         In Stock: {product.in_stock ? 'Yes' : 'No'}<br />
       </p>
       {console.log(product.id)}
-      <Link
+      {/* <Link
         to={{
           pathname: `/product/${product.id}/review`,
           state: { customer_id: customer_id }
         }}
       >
         Write a Review
-      </Link>
+      </Link> */}
+      <ReviewForm product={product} loggedInCustomer={loggedInCustomer}/>
     </div>
   );
 };

@@ -44,16 +44,15 @@ with app.app_context():
     ]
 
         products =[]
-        for i in range(10):
-            for data in products_data:
-                name = data["name"]
-                image = data["image_link"]
-                price = randint(2, 50)
-                in_stock = rc([False, True])
+        for data in products_data:
+            name = data["name"]
+            image = data["image_link"]
+            price = randint(2, 50)
+            in_stock = rc([False, True])
 
-                product = Product(name=name, image=image, price=price, in_stock=in_stock)
+            product = Product(name=name, image=image, price=price, in_stock=in_stock)
 
-                products.append(product)
+            products.append(product)
 
         db.session.add_all(products)
         db.session.commit()
@@ -80,8 +79,8 @@ with app.app_context():
                 review = Review(
                     review=data["review"],
                     rating=data["rating"],
-                    customer_id=rc(customers).id, 
-                    product_id=product.id,
+                    customer=rc(customers), 
+                    product=product,
                 )
                 db.session.add(review)
 

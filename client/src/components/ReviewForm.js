@@ -1,6 +1,8 @@
 import React from 'react';
 import { Formik, Form, Field } from 'formik';
-import { useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { useSnackbar } from 'notistack';
+// import { useLocation } from 'react-router-dom';
 import {
   FormControl,
   FormLabel,
@@ -10,11 +12,11 @@ import {
   Box,
 } from '@chakra-ui/react';
 
-const ReviewForm = ({customer_id, onSubmit }) => {
-  const location = useLocation();
-  const productId = location.state ? location.state.productId : null;
-
-  console.log(productId)
+const ReviewForm = ({product, loggedInCustomer, onSubmit, customer_id }) => {
+  // const location = useLocation();
+  // const productId = location.state ? location.state.productId : null;
+const navigate = useNavigate()
+const enqueueSnackbar = useSnackbar()
   return (
     <Box p={4} boxShadow="md" rounded="md" bg="white" mx="auto" maxWidth="500px">
       <Formik
@@ -22,7 +24,7 @@ const ReviewForm = ({customer_id, onSubmit }) => {
                 review: '', 
                 rating: 1, 
                 customer_id: customer_id, 
-                product_id: productId 
+                product_id: product.id
             }}
             
         onSubmit={(values, { resetForm }) => {
@@ -43,14 +45,16 @@ const ReviewForm = ({customer_id, onSubmit }) => {
           })
             .then((response) => {
               if (response.ok) {
+                enqueueSnackbar('Review Posted successfully', {variant: "error"});
                 return response.json();
               } else {
-                throw new Error('Failed to post review');
+                enqueueSnackbar('Failed to post review', {variant: "error"});
               }
             })
             .then((data) => {
               onSubmit(data);
               resetForm();
+              navigate("/")
             })
             .catch((error) => {
               console.error('Error posting review:', error);

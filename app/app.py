@@ -37,11 +37,11 @@ class CheckSession(Resource):
         if session.get('customer_id'):
             customer = Customer.query.filter(Customer.id==session['customer_id']).first()
 
-            customer_dict = {
-                "username": customer.username,
-                "password": customer._password_hash
-            }
-            return customer_dict, 200
+            # customer_dict = {
+            #     "username": customer.username,
+            #     "password": customer._password_hash
+            # }
+            return customer.to_dict(), 200
         
         return {'error': 'Resource unavailable'}
 
@@ -89,17 +89,19 @@ class Login(Resource):
                 return make_response(jsonify(customer_dict), 201)
             else:
                 print("Invalid password.")  
-        else:
-            print("Customer not found.")  
-
-        return {"error": "invalid username or password"}, 401
+                return {"error": "Invalid password"}, 401
+        
+        print("Customer not registered.") 
+        return {"error": "Customer not Registered"}, 404
 
 class Logout(Resource):
     def delete(self):
         if session.get('customer_id'):
             session['customer_id'] = None
+            print("Log out successful!")
             return {'info': 'customer logged out successfully'}, 200
         else:
+            print("Not logged in")
             return {'error': 'not logged in!'}, 401
         
 
@@ -299,6 +301,7 @@ class Customers(Resource):
     
 
 api.add_resource(Index, "/")
+api.add_resource(CheckSession, "/session", endpoint="session")
 api.add_resource(Signup, "/signup", endpoint="signup")
 api.add_resource(Login, "/login", endpoint="login")
 api.add_resource(Logout, "/logout", endpoint="logout")

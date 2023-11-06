@@ -10,11 +10,13 @@ import Reviews from './Reviews';
 import Contact from './Contact';
 import Product from './Product';
 import ReviewForm from './ReviewForm';
+import Review from './Review';
 import Logout from './Logout';
 
 function App() {
   const [products, setProducts] = useState([]);
   const [reviews, setReviews] = useState([]);
+  const [loggedInCustomer, setLoggedInCustomer] = useState({})
   const location = useLocation();
   const { state } = location;
 
@@ -22,6 +24,12 @@ function App() {
     fetch('/reviews')
       .then((r) => r.json())
       .then((data) => setReviews(data));
+  }, []);
+
+  useEffect(() => {
+    fetch('/session')
+      .then((r) => r.json())
+      .then((data) => setLoggedInCustomer(data));
   }, []);
 
   const handleReviewSubmit = (newReview) => {
@@ -43,18 +51,19 @@ function App() {
           <Route path="/signup" element={<SignupForm />} />
           <Route path="/login" element={<Login />} />
           <Route path="/contact" element={<Contact />} />
-          <Route path="/product/:id" element={<Product />} />
+          <Route path="/product/:id" element={<Product loggedInCustomer={loggedInCustomer}/>} />
           <Route
             path="/product/:id/review"
             element={
               <ReviewForm
                 onSubmit={handleReviewSubmit}
-                productId={state ? state.id : null}
+                // productId={state ? state.product_id : null}
                 customer_id={state ? state.customer_id : null}
               />
             }
           />
           <Route path="/reviews" element={<Reviews reviews={reviews} />} />
+          <Route path="/reviews/:id" element={<Review  />} />
           <Route path="/logout" element={<Logout />} />
         </Route>
       </Routes>
