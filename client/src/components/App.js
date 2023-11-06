@@ -4,6 +4,7 @@ import SignUp from "./SignUp";
 import Home from "./Home";
 import Navbar from "./NavBar";
 import Footer from "./Footer";
+import Logout from "./Logout"; 
 
 function App() {
   const [isSignedUp, setIsSignedUp] = useState(false);
@@ -20,23 +21,24 @@ function App() {
       })
       .catch((error) => {
         console.error("Error fetching data:", error);
-        setLoading(false); 
+        setLoading(false);
       });
   }, []);
-  
+
   return (
     <Router>
-      <Navbar/>
+      <Navbar />
       <div className="App">
         <Routes>
-          <Route path="/" element={<SignUp setIsSignedUp={setIsSignedUp} />} />
-          <Route path="/signup" element={<SignUp setIsSignedUp={setIsSignedUp} />} />
-
+          <Route path="/" element={<Home products={products} />} />
           <Route path="/home" element={<Home products={products} />} />
+          <Route path="/signup" element={<SignUp setIsSignedUp={setIsSignedUp} />} />
+          <Route path="/logout" element={<Logout />} /> {/* Add the Logout route */}
         </Routes>
       </div>
-      <Footer/>
+      <Footer />
     </Router>
   );
 }
+
 export default App;

@@ -7,7 +7,7 @@ const Navbar = () => {
     <nav className="navbar">
       <div className="navbar-logo">
         <p>
-          <span className="company-name">E-shop Product Feedback </span>
+          <span className="company-name">E-shop Product Feedback</span>
         </p>
         <p>
           <span className="company-salutation">We The Best</span>
@@ -17,7 +17,9 @@ const Navbar = () => {
         <li className="navbar-item"><Link to="/home">Home</Link></li>
         <li className="navbar-item"><Link to="/about">About</Link></li>
         <li className="navbar-item"><Link to="/contact">Contact</Link></li>
+        <li className="navbar-item"><Link to="/signup">Signup</Link></li>
         <li className="navbar-item"><Link to="/login">Login</Link></li>
+        <li className="navbar-item"><Link to="/logout">Logout</Link></li> {/* Link to the logout route */}
       </ul>
     </nav>
   );
