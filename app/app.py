@@ -6,8 +6,8 @@ from werkzeug.exceptions import NotFound
 import os
 from models import db, Customer, Product, Review
 
-from dotenv import load_dotenv
-load_dotenv()
+# from dotenv import load_dotenv
+# load_dotenv()
 
 app = Flask(__name__)
 # app.secret_key = os.getenv("MY_KEY")
