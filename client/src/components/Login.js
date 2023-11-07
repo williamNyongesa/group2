@@ -6,6 +6,7 @@ import YupPassword from 'yup-password';
 import { useNavigate } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
 import { Link } from 'react-router-dom';
+import { useState } from 'react';
 
 const loginContainer = css`
   text-align: center;
@@ -56,6 +57,7 @@ const signupLink = css`
 const Login = () => {
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
+  const [customer, setCustomer] = useState()
 
   YupPassword(yup);
 
@@ -63,6 +65,10 @@ const Login = () => {
     username: yup.string().required('Username required'),
     password: yup.string().password(),
   });
+
+  if (customer) {
+    return <div>{customer.name} is loggged in</div>;
+  }
 
   return (
     <div css={loginContainer}>
@@ -87,14 +93,15 @@ const Login = () => {
                 enqueueSnackbar('Invalid credentials', { variant: 'error' });
               } else if (res.status === 404) {
                 enqueueSnackbar('Customer not Registered', { variant: 'error' });
+              }else {
+                return res.json(); 
               }
             })
-            // .catch((error) => {
-            //   console.error('Error:', error);
-            //   enqueueSnackbar('An error occurred. Please try again later.', {
-            //     variant: 'error',
-            //   });
-            // });
+          .then((data) =>{
+            if(data)
+           { setCustomer(data)
+            console.log(data)}
+          })
         }}
       >
         {({ errors, touched }) => (

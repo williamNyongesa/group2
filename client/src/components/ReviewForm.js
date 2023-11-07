@@ -44,8 +44,9 @@ const enqueueSnackbar = useSnackbar()
             credentials: 'include', // This line is crucial for sending and receiving cookies
           })
             .then((response) => {
-              if (response.ok) {
-                enqueueSnackbar('Review Posted successfully', {variant: "error"});
+              if (response.stus===201) {
+                alert("Successful")
+                enqueueSnackbar('Review Posted successfully', {variant: "success"});
                 return response.json();
               } else {
                 enqueueSnackbar('Failed to post review', {variant: "error"});
@@ -55,6 +56,7 @@ const enqueueSnackbar = useSnackbar()
               onSubmit(data);
               resetForm();
               navigate("/")
+              
             })
             .catch((error) => {
               console.error('Error posting review:', error);
