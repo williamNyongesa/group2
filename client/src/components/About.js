@@ -19,7 +19,7 @@ const AboutUs = () => {
         Today, Home Decor Solutions Kenya stands as one of the leading home decor company in Kenya, offering a wide range of home decor from various brands. With a focus on customer satisfaction, Home Decor ensures that each customer receives personalized attention and finds the perfect home interiors to meet their needs and preferences.
       </p>
       <p className="company-info">
-        The success of Home Decor Solutions Kenya can be attributed to its core values of integrity, transparency, and professionalism. The company's dedicated team of home interior experts strives to exceed customer expectations at every step, providing a seamless consoltation experience and reliable after-sales support.
+        The Success of Home Decor Solutions Kenya can be attributed to its core values of integrity, transparency, and professionalism. The Company's dedicated team of home interior experts strives to exceed customer expectations at every step, providing a seamless consoltation experience and reliable After-sales support.
       </p>
       <p className="company-info">
         Home Decor Solutions Kenya continues to innovate and adapt to the changing market trends, embracing new designs and practices to stay ahead of the competition. As a result, it has gained a loyal customer base and earned a stellar reputation in the interior design industry.
@@ -31,4 +31,4 @@ const AboutUs = () => {
   );
 };
 
-export default AboutUs;
+export default AboutUs
